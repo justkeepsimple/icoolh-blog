@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: dev
+
+# mybatis日志
+logging:
+  level:
+    m.icoolh.blog.manage.dao: DEBUG
+  # 包路径为mapper文件包路径

@@ -1,0 +1,14 @@
+# Created by .ignore support plugin (hsz.mobi)
+/**/*.iml
+/**/.idea/
+/**/.classpath
+/**/.project
+
+/**/mvnw.cmd
+/**/mvnw
+/**/.mvn
+/generator/**/entity/
+/generator/**/dao/
+/**/out
+
+/**/target/

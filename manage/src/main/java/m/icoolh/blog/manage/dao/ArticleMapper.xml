@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="m.icoolh.blog.manage.dao.ArticleMapper">
+    <resultMap id="BaseResultMap" type="m.icoolh.blog.entity.Article">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="title_" property="title" jdbcType="VARCHAR"/>
+        <result column="thumb" property="thumb" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="origin" property="origin" jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="publish" property="publish" jdbcType="INTEGER"/>
+        <result column="password_" property="password" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="ResultMapVoNoContent" type="m.icoolh.blog.entity.vo.ArticleVo" extends="BaseResultMap">
+        <association property="meta" javaType="m.icoolh.blog.entity.ArticleMeta" column="id" select="getArticleMeta" />
+        <collection property="keywords" javaType="arraylist" ofType="string" column="id" select="listKwords" />
+        <collection property="tags" javaType="arraylist" ofType="m.icoolh.blog.entity.vo.TagVo" column="id" select="listTags"/>
+        <collection property="categories" javaType="arraylist" ofType="m.icoolh.blog.entity.vo.CategoryVo" column="id" select="listCategories" />
+        <collection property="extend" javaType="arraylist" ofType="m.icoolh.blog.entity.ArticleExt" column="id" select="listArtExts" />
+    </resultMap>
+
+    <resultMap id="ArtExtMap" type="m.icoolh.blog.entity.ArticleExt">
+        <result column="art_id" property="artId" jdbcType="BIGINT"/>
+        <result column="name_" property="name" jdbcType="VARCHAR"/>
+        <result column="value_" property="value" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="TagExtResultMap" type="m.icoolh.blog.entity.vo.TagVo">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name_" property="name" jdbcType="VARCHAR"/>
+        <result column="slug" property="slug" jdbcType="VARCHAR"/>
+        <result column="art_num" property="artNum" jdbcType="INTEGER"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <collection property="extend"  javaType="arraylist" ofType="m.icoolh.blog.entity.TagExt">
+            <result column="ext_name_" property="name" jdbcType="VARCHAR"/>
+            <result column="value_" property="value" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="CatExtResultMap" type="m.icoolh.blog.entity.vo.CategoryVo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="pid" property="pid" jdbcType="BIGINT" />
+        <result column="name_" property="name" jdbcType="VARCHAR" />
+        <result column="art_num" property="artNum" jdbcType="INTEGER" />
+        <result column="slug" property="slug" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <collection property="extend" javaType="arraylist" ofType="m.icoolh.blog.entity.CategoryExt">
+            <result column="ext_name_" property="name" jdbcType="VARCHAR"/>
+            <result column="value_" property="value" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        id, title_, thumb, description, origin, state, publish, password_, create_time, update_time
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="m.icoolh.blog.entity.ArticleExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from t_blog_article
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_blog_article
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM t_blog_article
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByExample" parameterType="m.icoolh.blog.entity.ArticleExample">
+        delete from t_blog_article
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="m.icoolh.blog.entity.Article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_blog_article (id, title_, thumb,
+                                    description, origin, state,
+                                    publish, password_, create_time,
+                                    update_time)
+        VALUES (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{thumb,jdbcType=VARCHAR},
+                #{description,jdbcType=VARCHAR}, #{origin,jdbcType=INTEGER}, #{state,jdbcType=INTEGER},
+                #{publish,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+                #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="m.icoolh.blog.entity.Article" useGeneratedKeys="true" keyProperty="id">
+        insert into t_blog_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title_,
+            </if>
+            <if test="thumb != null">
+                thumb,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="origin != null">
+                origin,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="publish != null">
+                publish,
+            </if>
+            <if test="password != null">
+                password_,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="thumb != null">
+                #{thumb,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="origin != null">
+                #{origin,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="publish != null">
+                #{publish,jdbcType=INTEGER},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="m.icoolh.blog.entity.ArticleExample" resultType="java.lang.Integer">
+        select count(*) from t_blog_article
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update t_blog_article
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.title != null">
+                title_ = #{record.title,jdbcType=VARCHAR},
+            </if>
+            <if test="record.thumb != null">
+                thumb = #{record.thumb,jdbcType=VARCHAR},
+            </if>
+            <if test="record.description != null">
+                description = #{record.description,jdbcType=VARCHAR},
+            </if>
+            <if test="record.origin != null">
+                origin = #{record.origin,jdbcType=INTEGER},
+            </if>
+            <if test="record.state != null">
+                state = #{record.state,jdbcType=INTEGER},
+            </if>
+            <if test="record.publish != null">
+                publish = #{record.publish,jdbcType=INTEGER},
+            </if>
+            <if test="record.password != null">
+                password_ = #{record.password,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update t_blog_article
+        set id = #{record.id,jdbcType=BIGINT},
+        title_ = #{record.title,jdbcType=VARCHAR},
+        thumb = #{record.thumb,jdbcType=VARCHAR},
+        description = #{record.description,jdbcType=VARCHAR},
+        origin = #{record.origin,jdbcType=INTEGER},
+        state = #{record.state,jdbcType=INTEGER},
+        publish = #{record.publish,jdbcType=INTEGER},
+        password_ = #{record.password,jdbcType=VARCHAR},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="m.icoolh.blog.entity.Article">
+        update t_blog_article
+        <set>
+            <if test="title != null">
+                title_ = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="thumb != null">
+                thumb = #{thumb,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="origin != null">
+                origin = #{origin,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="publish != null">
+                publish = #{publish,jdbcType=INTEGER},
+            </if>
+            <if test="password != null">
+                password_ = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="m.icoolh.blog.entity.Article">
+        UPDATE t_blog_article
+        SET title_      = #{title,jdbcType=VARCHAR},
+            thumb       = #{thumb,jdbcType=VARCHAR},
+            description = #{description,jdbcType=VARCHAR},
+            origin      = #{origin,jdbcType=INTEGER},
+            state       = #{state,jdbcType=INTEGER},
+            publish     = #{publish,jdbcType=INTEGER},
+            password_   = #{password,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="listArticleVos" resultMap="ResultMapVoNoContent">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_blog_article
+        ORDER BY update_time DESC
+    </select>
+
+    <select id="listKwords" resultType="string">
+        SELECT keyword FROM t_blog_article_keyw WHERE art_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="listTags" resultMap="TagExtResultMap">
+        SELECT tbt.id, tbt.name_, tbt.slug, tbt.art_num, tbt.description, tbt.create_time, tbt.update_time, tbte.name_ ext_name_, tbte.value_
+        from t_blog_article_tag tbat LEFT JOIN t_blog_tag tbt
+        ON tbat.tag_id = tbt.id
+        LEFT JOIN t_blog_tag_ext tbte
+        ON  tbt.id = tbte.tag_id
+        WHERE tbat.art_id = #{id}
+    </select>
+
+    <select id="listCategories" resultMap="CatExtResultMap">
+        SELECT tbc.id, tbc.pid, tbc.name_, tbc.art_num, tbc.slug, tbc.description, tbc.create_time, tbc.update_time, tbce.name_ ext_name_, tbce.value_
+        FROM t_blog_article_cat tbac LEFT JOIN t_blog_category tbc
+        ON tbac.cat_id = tbc.id
+        LEFT JOIN t_blog_category_ext tbce
+        ON tbce.cat_id = tbc.id
+        WHERE tbac.art_id = #{id}
+    </select>
+
+    <select id="listArtExts" resultMap="ArtExtMap">
+        SELECT art_id, name_, value_ FROM t_blog_article_ext
+        WHERE art_id = #{id}
+    </select>
+    
+    <select id="getArticleMeta" resultType="m.icoolh.blog.entity.ArticleMeta">
+        SELECT art_id artId, likes_ likes, views_ views, comments_ comments
+        FROM t_blog_article_meta
+        WHERE art_id = #{id}
+    </select>
+</mapper>

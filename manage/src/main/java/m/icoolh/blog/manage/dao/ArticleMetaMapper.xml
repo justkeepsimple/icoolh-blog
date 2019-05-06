@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="m.icoolh.blog.manage.dao.ArticleMetaMapper" >
+  <resultMap id="BaseResultMap" type="m.icoolh.blog.entity.ArticleMeta" >
+    <result column="art_id" property="artId" jdbcType="BIGINT" />
+    <result column="likes_" property="likes" jdbcType="INTEGER" />
+    <result column="views_" property="views" jdbcType="INTEGER" />
+    <result column="comments_" property="comments" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    art_id, likes_, views_, comments_
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="m.icoolh.blog.entity.ArticleMetaExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_blog_article_meta
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="m.icoolh.blog.entity.ArticleMetaExample" >
+    delete from t_blog_article_meta
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="m.icoolh.blog.entity.ArticleMeta" >
+    insert into t_blog_article_meta (art_id, likes_, views_, 
+      comments_)
+    values (#{artId,jdbcType=BIGINT}, #{likes,jdbcType=INTEGER}, #{views,jdbcType=INTEGER}, 
+      #{comments,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="m.icoolh.blog.entity.ArticleMeta" >
+    insert into t_blog_article_meta
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="artId != null" >
+        art_id,
+      </if>
+      <if test="likes != null" >
+        likes_,
+      </if>
+      <if test="views != null" >
+        views_,
+      </if>
+      <if test="comments != null" >
+        comments_,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="artId != null" >
+        #{artId,jdbcType=BIGINT},
+      </if>
+      <if test="likes != null" >
+        #{likes,jdbcType=INTEGER},
+      </if>
+      <if test="views != null" >
+        #{views,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="m.icoolh.blog.entity.ArticleMetaExample" resultType="java.lang.Integer" >
+    select count(*) from t_blog_article_meta
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_blog_article_meta
+    <set >
+      <if test="record.artId != null" >
+        art_id = #{record.artId,jdbcType=BIGINT},
+      </if>
+      <if test="record.likes != null" >
+        likes_ = #{record.likes,jdbcType=INTEGER},
+      </if>
+      <if test="record.views != null" >
+        views_ = #{record.views,jdbcType=INTEGER},
+      </if>
+      <if test="record.comments != null" >
+        comments_ = #{record.comments,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_blog_article_meta
+    set art_id = #{record.artId,jdbcType=BIGINT},
+      likes_ = #{record.likes,jdbcType=INTEGER},
+      views_ = #{record.views,jdbcType=INTEGER},
+      comments_ = #{record.comments,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

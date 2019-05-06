@@ -1,0 +1,78 @@
+server:
+  port: ${port}
+########################################## mysql数据库 #######################################
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+    name: dev
+    username: root
+    password: root
+    url: jdbc:mysql://127.0.0.1:3306/m-icoolh-blog?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 数据源其他配置
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+  application:
+    name: icoolh-manage
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 10000
+    database: 8
+    ssl: false
+    jedis:
+      pool:
+        max-active: 16
+        max-wait: -1
+        max-idle: 8
+        min-idle: 2
+
+
+# 分页配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+
+
+eureka:
+  client:
+    register-with-eureka: true #是否将自己注册到Eureka服务中，本身是无需注册的
+    fetch-registry: true #是否从Eureka中获取注册信息
+    service-url:
+      defaultZone: http://admin:1qazxsw2@${ipaddr}:10001/eureka/
+      #defaultZone: http://admin:1qazxsw2@47.112.1.41:7003/eureka/,http://admin:1qazxsw2@119.23.181.177:7004/eureka/
+    eureka-server-connect-timeout-seconds: 60
+    eureka-server-read-timeout-seconds: 60
+
+  instance:
+    prefer-ip-address: true #将自己的ip地址注册到Eureka服务中
+    ip-address: ${ipaddr}
+    instance-id: ${spring.application.name}:${server.port}
+    lease-expiration-duration-in-seconds: 30 #续约更新时间（默认30s）
+    lease-renewal-interval-in-seconds: 10 #续约到期时间 (默认90s)
+    leaseRenewalIntervalInSeconds: 10 #心跳时间
+
+
+#txmanager地址
+#tm:
+#  manager:
+#    url: http://192.168.1.120:8090/tx/manager/
+
+
+

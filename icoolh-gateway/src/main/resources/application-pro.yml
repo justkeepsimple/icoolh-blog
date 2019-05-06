@@ -1,0 +1,88 @@
+server:
+  port: ${port}
+spring:
+  application:
+    name: icoolh-api-gateway
+  redis:
+        host: r-wz9dc50f0240a0b4.redis.rds.aliyuncs.com
+        port: 6379
+        password: Zgg1qazXSW@3edc-redis
+        pool:
+          max-active: 16
+          max-wait: -1
+          max-idle: 8
+          min-idle: 2
+        timeout: 10000
+        database: 8
+        ssl: false
+
+eureka:
+  client:
+    register-with-eureka: true #是否将自己注册到Eureka服务中，本身是无需注册的
+    fetch-registry: true #是否从Eureka中获取注册信息
+    service-url:
+      #defaultZone: http://admin:1qazxsw2@192.168.1.120:6868/eureka/,http://admin:1qazxsw2@192.168.1.120:6869/eureka/
+      defaultZone: ${eureka.server}
+
+  instance:
+    prefer-ip-address: true #将自己的ip地址注册到Eureka服务中
+    ip-address: ${ipaddr}
+    instance-id: ${spring.application.name}:${server.port}
+zuul:
+  routes:
+    zgg-user:
+      path: /user/**
+      serviceId: icoolh-user
+      custom-sensitive-headers: true
+    zgg-sms:
+      path: /sms/**
+      serviceId: icoolh-sms
+      custom-sensitive-headers: true
+    zgg-items:
+      path: /items/**
+      serviceId: icoolh-items
+      custom-sensitive-headers: true
+    zgg-manage-web:
+      path: /manage/**
+      serviceId: icoolh-manage-web
+      custom-sensitive-headers: true
+    zgg-oss:
+      path: /oss/**
+      serviceId: icoolh-oss
+      custom-sensitive-headers: true
+    zgg-shop:
+      path: /shop/**
+      serviceId: icoolh-shop
+      custom-sensitive-headers: true
+  #sensitive-headers: \u002a #通过网关调用时实现session一致性
+  sensitiveHeaders: \u002a #通过网关调用时实现session一致性
+  add-host-header: true
+  retryable: true
+  host:
+    connect-timeout-millis: 5000
+    socket-timeout-millis: 10000
+
+
+#ribbon重试机制
+ribbon:
+  ReadTimeout: 5000
+  ConnectTimeout: 5000
+  SocketTimeout: 5000
+  # 同一实例最大重试次数，不包括首次调用
+  MaxAutoRetries: 1
+   # 重试其他实例的最大重试次数，不包括首次所选的server
+  MaxAutoRetriesNextServer: 2
+   # 是否所有操作都进行重试
+  OkToRetryOnAllOperations: true
+  retryableStatusCodes: 404,500,502,408
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 6000
+
+
+

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="m.icoolh.blog.manage.dao.CategoryExtMapper" >
+  <resultMap id="BaseResultMap" type="m.icoolh.blog.entity.CategoryExt" >
+    <result column="cat_id" property="catId" jdbcType="BIGINT" />
+    <result column="name_" property="name" jdbcType="VARCHAR" />
+    <result column="value_" property="value" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    cat_id, name_, value_
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="m.icoolh.blog.entity.CategoryExtExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_blog_category_ext
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="m.icoolh.blog.entity.CategoryExtExample" >
+    delete from t_blog_category_ext
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="m.icoolh.blog.entity.CategoryExt" >
+    insert into t_blog_category_ext (cat_id, name_, value_
+      )
+    values (#{catId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="m.icoolh.blog.entity.CategoryExt" >
+    insert into t_blog_category_ext
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="catId != null" >
+        cat_id,
+      </if>
+      <if test="name != null" >
+        name_,
+      </if>
+      <if test="value != null" >
+        value_,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="catId != null" >
+        #{catId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        #{value,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="m.icoolh.blog.entity.CategoryExtExample" resultType="java.lang.Integer" >
+    select count(*) from t_blog_category_ext
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_blog_category_ext
+    <set >
+      <if test="record.catId != null" >
+        cat_id = #{record.catId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null" >
+        name_ = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.value != null" >
+        value_ = #{record.value,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_blog_category_ext
+    set cat_id = #{record.catId,jdbcType=BIGINT},
+      name_ = #{record.name,jdbcType=VARCHAR},
+      value_ = #{record.value,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+
+    <insert id="insertBatchCatExts">
+        insert into t_blog_category_ext (cat_id, name_, value_) values
+        <foreach collection="exts" item="ext" index="index" separator=",">
+            (
+            #{catId, jdbcType=BIGINT},
+            #{ext.name, jdbcType=VARCHAR},
+            #{ext.value, jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+
+    <delete id="deleteByCatId" parameterType="long">
+        DELETE FROM t_blog_category_ext where cat_id = #{catId,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByCatIds" parameterType="java.util.List">
+        DELETE FROM t_blog_category_ext where cat_id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id,jdbcType=BIGINT}
+        </foreach>
+    </delete>
+</mapper>
